@@ -17,7 +17,7 @@ This is a code challenge designed to model prices entity of Inditex
 
 ## Possible Improvements
 
-* Add map struct and inject it using @autowired in Service Layer (mapper dtos per layer)
+* Add map struct and inject custom mapper using @autowired in Service Layer (mapper dtos per layer)
 * Change price result implementation using streams operation (If prices per product branch would be grater than 100) with custom query returning unique price ordering by priority(more efficient than actual implementation)
 
 
