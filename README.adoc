@@ -1,0 +1,98 @@
+# Inditex code challenge
+
+This is a code challenge designed to model prices entity of Inditex
+
+## Prerequisites
+
+* Java 17+
+* Maven 3 installed.
+
+## Implemented features
+
+* Message controller endpoint localhost:8080/message (Post/Get)
+* Service and Controller layer tested (Integration+Unit testing)
+* spring-cloud-starter-sleuth (distributed tracing )
+* Open Api 3 documentation http://localhost:8080/swagger-ui/index.html
+* Continuous integration using Github Actions
+
+## Possible Improvements
+
+* Add map struct and inject it using @autowired in Service Layer (mapper dtos per layer)
+* Change price result implementation using streams operation (If prices per product branch would be grater than 100) with custom query returning unique price ordering by priority(more efficient than actual implementation)
+
+
+## Main controller integration test case
+
+BranchControllerIntegrationTest contains integration test using h2 in memory database. It will crete whole spring context (controller+service+repository). Before running test cases will create database example tuples using repositories :
+
+   @BeforeAll
+    public void setup() {
+        BranchEntity branchEntity = Util.generateBranchEntity(1L);
+        PriceEntity priceEntity = Util.generatePriceEntity(1L, branchEntity, 10);
+        priceEntity.setPriority(0);
+        priceEntity.setStartDate(LocalDateTime.of(2020, 6, 14, 0, 0, 0));
+        priceEntity.setEndDate(LocalDateTime.of(2020, 12, 31, 23, 59, 59));
+        BranchEntity savedBranch = branchRepository.save(branchEntity);
+        priceEntity.setBranchEntity(savedBranch);
+        priceRepository.save(priceEntity);
+        PriceEntity priceEntity2 = Util.generatePriceEntity(2L, branchEntity, 10);
+        priceEntity2.setPriority(1);
+        priceEntity2.setStartDate(LocalDateTime.of(2020, 6, 14, 15, 0, 0));
+        priceEntity2.setEndDate(LocalDateTime.of(2020, 6, 14, 18, 30, 0));
+        priceEntity2.setBranchEntity(savedBranch);
+        priceRepository.save(priceEntity2);
+        PriceEntity priceEntity3 = Util.generatePriceEntity(3L, branchEntity, 10);
+        priceEntity3.setPriority(1);
+        priceEntity3.setStartDate(LocalDateTime.of(2020, 6, 15, 0, 0, 0));
+        priceEntity3.setEndDate(LocalDateTime.of(2020, 6, 15, 11, 0, 0));
+        priceEntity3.setBranchEntity(savedBranch);
+        priceRepository.save(priceEntity3);
+        PriceEntity priceEntity4 = Util.generatePriceEntity(4L, branchEntity, 10);
+        priceEntity4.setPriority(1);
+        priceEntity4.setStartDate(LocalDateTime.of(2020, 6, 15, 16, 0, 0));
+        priceEntity4.setEndDate(LocalDateTime.of(2020, 12, 31, 23, 59, 59));
+        priceEntity4.setBranchEntity(savedBranch);
+        priceRepository.save(priceEntity4);
+    }
+
+After creating database a parametrized test will be run using values to be tested tha was proposed in document description:
+
+  private static Stream<Arguments> PostConditionsAssertGenerator() {
+        return Stream.of(
+                Arguments.of("2020-06-14T10:00:00.000Z", 1L),
+                Arguments.of("2020-06-14T16:00:00.000Z", 2L),
+                Arguments.of("2020-06-14T21:00:00.000Z", 1L),
+                Arguments.of("2020-06-15T10:00:00.000Z", 3L),
+                Arguments.of("2020-06-16T21:00:00.000Z", 4L)
+        );
+    }
+
+ @ParameterizedTest
+    @MethodSource("PostConditionsAssertGenerator")
+    void whenCallingGetBranchUsingDateFilterShouldReturnCorrectValues(String date, Long expectedId) {
+ }
+
+## Curl command  test Spring boot application
+
+Run Spring boot application
+
+  mvn spring-boot:run
+
+Curl commands
+
+   curl --location --request GET 'http://localhost:8080/api/v1/branches/1/products/35455?pricingDate=2020-06-14T10:00:00.000Z'
+
+   curl --location --request GET 'http://localhost:8080/api/v1/branches/1/products/35455?pricingDate=2020-06-14T16:00:00.000Z'
+
+   curl --location --request GET 'http://localhost:8080/api/v1/branches/1/products/35455?pricingDate=2020-06-14T21:00:00.000Z'
+
+   curl --location --request GET 'http://localhost:8080/api/v1/branches/1/products/35455?pricingDate=2020-06-15T10:00:00.000Z'
+
+    curl --location --request GET 'http://localhost:8080/api/v1/branches/1/products/35455?pricingDate=2020-06-16T21:00:00.000Z'
+
+
+image::/images/curl-result.png[]
+
+
+
+
