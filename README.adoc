@@ -15,7 +15,7 @@ This is a code challenge designed to model prices entity of Inditex
 * Open Api 3 documentation http://localhost:8080/swagger-ui/index.html
 * Continuous integration using Github Actions
 
-## Possible Improvements
+## Possibility of improving
 
 * Add map struct and inject custom mapper using @autowired in Service Layer (mapper dtos per layer)
 * Change price result implementation using streams operation (If prices per product branch would be grater than 100) with custom query returning unique price ordering by priority(more efficient than actual implementation)
