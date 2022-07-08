@@ -57,15 +57,18 @@ BranchControllerIntegrationTest contains integration test using h2 in memory dat
 
 After creating database a parametrized test will be run using values to be tested tha was proposed in document description:
 
-  private static Stream<Arguments> PostConditionsAssertGenerator() {
+    public static final BigDecimal PRICE1 = BigDecimal.valueOf(35.50);
+    public static final BigDecimal PRICE2 = BigDecimal.valueOf(25.45);
+    public static final BigDecimal PRICE3 = BigDecimal.valueOf(30.50);
+    public static final BigDecimal PRICE4 = BigDecimal.valueOf(38.95);
+    private static Stream<Arguments> PostConditionsAssertGenerator() {
         return Stream.of(
-                Arguments.of("2020-06-14T10:00:00.000Z", 1L),
-                Arguments.of("2020-06-14T16:00:00.000Z", 2L),
-                Arguments.of("2020-06-14T21:00:00.000Z", 1L),
-                Arguments.of("2020-06-15T10:00:00.000Z", 3L),
-                Arguments.of("2020-06-16T21:00:00.000Z", 4L)
+                Arguments.of("2020-06-14T10:00:00.000Z", PRICE1),
+                Arguments.of("2020-06-14T16:00:00.000Z", PRICE2),
+                Arguments.of("2020-06-14T21:00:00.000Z", PRICE1),
+                Arguments.of("2020-06-15T10:00:00.000Z", PRICE3),
+                Arguments.of("2020-06-16T21:00:00.000Z", PRICE4)
         );
-    }
 
  @ParameterizedTest
     @MethodSource("PostConditionsAssertGenerator")
