@@ -70,9 +70,9 @@ After creating database a parametrized test will be run using values to be teste
                 Arguments.of("2020-06-16T21:00:00.000Z", PRICE4)
         );
 
- @ParameterizedTest
+  @ParameterizedTest
     @MethodSource("PostConditionsAssertGenerator")
-    void whenCallingGetBranchUsingDateFilterShouldReturnCorrectValues(String date, Long expectedId) {
+    void whenCallingGetBranchUsingDateFilterShouldReturnCorrectValues(String date, BigDecimal expectedPrice) {
  }
 
 ## Curl command  test Spring boot application
